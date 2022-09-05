@@ -1,0 +1,141 @@
+const db = require("../../models");
+
+// const Shop = db.shops;
+const Op = db.Sequelize.Op;
+// const jwt = require("jsonwebtoken");
+// const tokenData = require("../config/auth.config");
+
+//const accessTokenSecret = tokenData.secret;
+// Create and Save a new User
+exports.create = async (req, res) => {
+  // Create comment
+  const addressType = {
+    benefit_id: req.body.benefit_id,
+    employee_id: req.body.employee_id,
+    is_percent_employee_benefit: req.body.is_percent_employee_benefit,
+    value_employee_benefit: req.body.value_employee_benefit,
+
+    is_enable_employee_benefit: 1,
+  };
+  await db.employee_benefit
+    .create(addressType)
+    .then((data) => {
+      res.send(data);
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: err.message || "addressType cant be created",
+      });
+    });
+};
+
+exports.findall = async (req, res) => {
+  db.employee_benefit
+    .findAll({ where: {} })
+    .then((data) => {
+      res.send(data);
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: err.message || "no  id ",
+      });
+    });
+};
+
+exports.findById = async (req, res) => {
+  db.employee_benefit
+    .findOne({
+      where: {
+        employee_id: req.params.id,
+        is_enable_employee_benefit: 1,
+      },
+    })
+    .then((data) => {
+      res.send(data);
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: err.message || "this point title has no earned points ",
+      });
+    });
+};
+
+exports.updateById = async (req, res) => {
+  const id = req.params.id;
+
+  db.employee_benefit
+    .update(req.body, {
+      where: { id_employee_benefit: id },
+    })
+    .then((num) => {
+      if (num == 1) {
+        res.send({
+          message: " updated successfully .",
+        });
+      } else {
+        res.send({
+          message: `Cannot update  id:${id}. Please check  ID.`,
+        });
+      }
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: err.message || "Error updating  id=" + id,
+      });
+    });
+};
+
+exports.disableById = async (req, res) => {
+  const id = req.params.id;
+
+  db.employee_benefit
+    .update(
+      { is_enable_employee_benefit: 0 },
+      {
+        where: { id_employee_benefit: id },
+      }
+    )
+    .then((num) => {
+      if (num == 1) {
+        res.send({
+          message: " disable successfully .",
+        });
+      } else {
+        res.send({
+          message: `Cannot disable  id:${id}. Please check  ID.`,
+        });
+      }
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: err.message || "Error updating  id=" + id,
+      });
+    });
+};
+exports.enableById = async (req, res) => {
+  const id = req.params.id;
+
+  db.employee_benefit
+    .update(
+      { is_enable_employee_benefit: 1 },
+      {
+        where: { id_employee_benefit: id },
+      }
+    )
+    .then((num) => {
+      if (num == 1) {
+        res.send({
+          message: " enable successfully .",
+        });
+      } else {
+        res.send({
+          message: `Cannot enable  id:${id}. Please check  ID.`,
+        });
+      }
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: err.message || "Error updating  id=" + id,
+      });
+    });
+};
